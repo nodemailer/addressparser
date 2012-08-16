@@ -1,0 +1,15 @@
+{
+  "name": "addressparser",
+  "version": "0.1.0",
+  "description": "Parse e-mail addresses",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodeunit test.js"
+  },
+  "repository": "",
+  "author": "Andris Reinman",
+  "license": "MIT",
+  "devDependencies":{
+    "nodeunit": "*"
+  }
+}

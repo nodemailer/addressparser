@@ -58,6 +58,7 @@ function handleAddress(tokens){
     var token,
         isGroup = false,
         state = "text",
+        address,
         addresses = [],
         data = {
             address: [],
@@ -156,10 +157,21 @@ function handleAddress(tokens){
         if(!data.address && isGroup){
             return [];
         }else{
-            addresses.push({
+            address = {
                 address: data.address || data.text,
                 name: data.text || data.address
-            });
+            };
+
+            if(address.address == address.name){
+                if((address.address || "").match(/@/)){
+                    delete address.name;
+                }else{
+                    delete address.address;
+                }
+                
+            }
+
+            addresses.push(address);
         }
     }
 

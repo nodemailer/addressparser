@@ -4,13 +4,13 @@ var testCase = require('nodeunit').testCase,
 exports["General tests"] = {
     "Single address": function(test){
         var input = "andris@tr.ee",
-            expected = [{name: "andris@tr.ee", address:"andris@tr.ee"}];
+            expected = [{address:"andris@tr.ee"}];
         test.deepEqual(addressparser(input), expected);
         test.done();
     },
     "Multiple addresses": function(test){
         var input = "andris@tr.ee, andris@example.com",
-            expected = [{name: "andris@tr.ee", address:"andris@tr.ee"}, {name: "andris@example.com", address:"andris@example.com"}];
+            expected = [{address:"andris@tr.ee"}, {address:"andris@example.com"}];
         test.deepEqual(addressparser(input), expected);
         test.done();
     },
@@ -58,7 +58,7 @@ exports["General tests"] = {
     },
     "No address": function(test){
         var input = "andris",
-            expected = [{name: "andris", address:"andris"}];
+            expected = [{name: "andris"}];
         test.deepEqual(addressparser(input), expected);
         test.done();
     }

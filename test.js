@@ -61,5 +61,11 @@ exports["General tests"] = {
             expected = [{name: "andris", address:""}];
         test.deepEqual(addressparser(input), expected);
         test.done();
+    },
+    "Apostophe in name": function(test){
+        var input = "O'Neill",
+            expected = [{name: "O'Neill", address:""}];
+        test.deepEqual(addressparser(input), expected);
+        test.done();
     }
 }

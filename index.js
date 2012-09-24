@@ -202,7 +202,6 @@ function Tokenizer(str){
  */
 Tokenizer.prototype.operators = {
     "\"": "\"",
-    "'": "'",
     "(": ")",
     "<": ">",
     ",": "",

@@ -6,7 +6,10 @@
   "scripts": {
     "test": "nodeunit test.js"
   },
-  "repository": "",
+  "repository": { 
+    "type": "git",
+    "url": "https://github.com/andris9/addressparser.git"
+  },
   "author": "Andris Reinman",
   "license": "MIT",
   "devDependencies":{

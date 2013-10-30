@@ -19,15 +19,28 @@ Parse some address strings with addressparser(field)
     var addresses = addressparser("andris <andris@tr.ee>");
     console.log(addresses); // [{name: "andris", address:"andris@tr.ee"}]
 
-Even complex address fields are supported
+And when using groups
 
-    addressparser('"Bach, Sebastian" <sebu@example.com>, mozart@example.com (Mozzie)');
-    // [{name: "Bach, Sebastian", address: "sebu@example.com"},
-    //  {name: "Mozzie", address: "mozart@example.com"}]
+    addressparser('Composers:"Bach, Sebastian" <sebu@example.com>, mozart@example.com (Mozzie);');
 
-    addressparser("Music Group: sebu@example.com, mozart@example.com;");
-    // [{name: "Music Group", address: "sebu@example.com"},
-    //  {name: "Music Group", address: "mozart@example.com"}]
+the result is
+
+    [
+        {
+            name: "Composers",
+            group: [
+                {
+                    address: "sebu@example.com",
+                    name: "Bach, Sebastian"
+                },
+                {
+                    address: "mozart@example.com",
+                    name: "Mozzie"
+                }
+            ]
+        }
+    ]
+
 
 ## Notes
 

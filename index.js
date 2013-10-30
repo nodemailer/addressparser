@@ -1,10 +1,18 @@
+"use strict";
+
+/**
+ * Defines an object as a namespace for the parsing function
+ */
+var addressparser = {};
 
 // expose to the world
-module.exports = parser;
+module.exports = function(address){
+    return addressparser.parse(address);
+};
 
 /**
  * Parses structured e-mail addresses from an address field
- * 
+ *
  * Example:
  *
  *    "Name <address@domain>"
@@ -16,10 +24,9 @@ module.exports = parser;
  * @param {String} str Address field
  * @return {Array} An array of address objects
  */
-function parser(str){
-    var tokenizer = new Tokenizer(str),
+addressparser.parse = function(str){
+    var tokenizer = new addressparser.Tokenizer(str),
         tokens = tokenizer.tokenize();
-
 
     var addresses = [],
         address = [],
@@ -27,7 +34,9 @@ function parser(str){
 
     tokens.forEach(function(token){
         if(token.type == "operator" && (token.value =="," || token.value ==";")){
-            addresses.push(address);
+            if(address.length){
+                addresses.push(address);
+            }
             address = [];
         }else{
             address.push(token);
@@ -39,14 +48,14 @@ function parser(str){
     }
 
     addresses.forEach(function(address){
-        address = handleAddress(address);
+        address = addressparser._handleAddress(address);
         if(address.length){
             parsedAddresses = parsedAddresses.concat(address);
         }
     });
 
     return parsedAddresses;
-}
+};
 
 /**
  * Converts tokens for a single address into an address object
@@ -54,24 +63,24 @@ function parser(str){
  * @param {Array} tokens Tokens object
  * @return {Object} Address object
  */
-function handleAddress(tokens){
+addressparser._handleAddress = function(tokens){
     var token,
         isGroup = false,
         state = "text",
         address,
         addresses = [],
         data = {
-            address: [],
-            comment: [],
-            group: [],
-            text: []
+            address: [],
+            comment: [],
+            group: [],
+            text: []
         },
         i, len;
 
     // Filter out <addresses>, (comments) and regular text
     for(i=0, len = tokens.length; i<len; i++){
         token = tokens[i];
-        
+
         if(token.type == "operator"){
             switch(token.value){
                 case "<":
@@ -100,17 +109,13 @@ function handleAddress(tokens){
         data.comment = [];
     }
 
-    if(data.group.length){
-        
-        if(data.text.length){
-            data.text = data.text.join(" ");
-        }
-
-        addresses = addresses.concat(parser(data.group.join(",")).map(function(address){
-            address.name = data.text || address.name;
-            return address;
-        }));
-
+    if(isGroup){
+        // http://tools.ietf.org/html/rfc2822#appendix-A.1.3
+        data.text = data.text.join(" ");
+        addresses.push({
+            name: data.text || address.name,
+            group: data.group.length ? addressparser.parse(data.group.join(",")) : []
+        });
     }else{
         // If no address was found, try to detect one from regular text
         if(!data.address.length && data.text.length){
@@ -121,21 +126,23 @@ function handleAddress(tokens){
                 }
             }
 
+            var _regexHandler = function(address){
+                if(!data.address.length){
+                    data.address = [address.trim()];
+                    return " ";
+                }else{
+                    return address;
+                }
+            };
+
             // still no address
             if(!data.address.length){
                 for(i = data.text.length - 1; i>=0; i--){
-                    data.text[i] = data.text[i].replace(/\s*\b[^@\s]+@[^@\s]+\b\s*/, function(address){
-                        if(!data.address.length){
-                            data.address = [address.trim()];
-                            return " ";
-                        }else{
-                            return address;
-                        }
-                    }).trim();
+                    data.text[i] = data.text[i].replace(/\s*\b[^@\s]+@[^@\s]+\b\s*/, _regexHandler).trim();
                     if(data.address.length){
                         break;
                     }
-                }                
+                }
             }
         }
 
@@ -143,7 +150,7 @@ function handleAddress(tokens){
         if(!data.text.length && data.comment.length){
             data.text = data.comment;
             data.comment = [];
-        }  
+        }
 
         // Keep only the first address occurence, push others to regular text
         if(data.address.length > 1){
@@ -158,17 +165,17 @@ function handleAddress(tokens){
             return [];
         }else{
             address = {
-                address: data.address || data.text || "",
-                name: data.text || data.address || ""
+                address: data.address || data.text || "",
+                name: data.text || data.address || ""
             };
 
             if(address.address == address.name){
-                if((address.address || "").match(/@/)){
+                if((address.address || "").match(/@/)){
                     address.name = "";
                 }else{
                     address.address = "";
                 }
-                
+
             }
 
             addresses.push(address);
@@ -176,18 +183,17 @@ function handleAddress(tokens){
     }
 
     return addresses;
-}
-
+};
 
 /**
- * Creates a TOkenizer object for tokenizing address field strings
+ * Creates a Tokenizer object for tokenizing address field strings
  *
  * @constructor
  * @param {String} str Address field string
  */
-function Tokenizer(str){
+addressparser.Tokenizer = function(str){
 
-    this.str = (str || "").toString();
+    this.str = (str || "").toString();
     this.operatorCurrent = "";
     this.operatorExpecting = "";
     this.node = null;
@@ -195,12 +201,12 @@ function Tokenizer(str){
 
     this.list = [];
 
-}
+};
 
 /**
  * Operator tokens and which tokens are expected to end the sequence
  */
-Tokenizer.prototype.operators = {
+addressparser.Tokenizer.prototype.operators = {
     "\"": "\"",
     "(": ")",
     "<": ">",
@@ -213,7 +219,7 @@ Tokenizer.prototype.operators = {
  *
  * @return {Array} An array of operator|text tokens
  */
-Tokenizer.prototype.tokenize = function(){
+addressparser.Tokenizer.prototype.tokenize = function(){
     var chr, list = [];
     for(var i=0, len = this.str.length; i<len; i++){
         chr = this.str.charAt(i);
@@ -235,8 +241,8 @@ Tokenizer.prototype.tokenize = function(){
  *
  * @param {String} chr Character from the address field
  */
-Tokenizer.prototype.checkChar = function(chr){
-    if((chr in this.operators || chr == "\\") && this.escaped){
+addressparser.Tokenizer.prototype.checkChar = function(chr){
+    if((chr in this.operators || chr == "\\") && this.escaped){
         this.escaped = false;
     }else if(this.operatorExpecting && chr == this.operatorExpecting){
         this.node = {

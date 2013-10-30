@@ -34,13 +34,20 @@ exports["General tests"] = {
     },
     "Emtpy group": function(test){
         var input = "Undisclosed:;",
-            expected = [];
+            expected = [{name: 'Undisclosed', group: []}];
+
         test.deepEqual(addressparser(input), expected);
         test.done();
     },
     "Address group": function(test){
         var input = "Disclosed:andris@tr.ee, andris@example.com;",
-            expected = [{name: "Disclosed", address:"andris@tr.ee"}, {name: "Disclosed", address:"andris@example.com"}];
+            expected = [{name: 'Disclosed', group:[{address: 'andris@tr.ee', name: ''},{address: 'andris@example.com', name: ''}]}];
+        test.deepEqual(addressparser(input), expected);
+        test.done();
+    },
+    "Mixed group": function(test){
+        var input = "Test User <test.user@mail.ee>, Disclosed:andris@tr.ee, andris@example.com;,,,, Undisclosed:;",
+            expected = [{"address":"test.user@mail.ee","name":"Test User"}, {"name":"Disclosed","group":[{"address":"andris@tr.ee","name":""}, {"address":"andris@example.com","name":""}]}, {"name":"Undisclosed","group":[]}];
         test.deepEqual(addressparser(input), expected);
         test.done();
     },

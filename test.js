@@ -74,5 +74,14 @@ exports["General tests"] = {
             expected = [{name: "O'Neill", address:""}];
         test.deepEqual(addressparser(input), expected);
         test.done();
+    },
+    "Colon in name": function(test){
+        var input = "FirstName Surname-WithADash :: Company <firstname@company.com>",
+            expected = [ { name: 'FirstName Surname-WithADash',
+                group: 
+                 [ { name: undefined,
+                     group: [ { address: 'firstname@company.com', name: 'Company' } ] } ] } ];
+        test.deepEqual(addressparser(input), expected);
+        test.done();
     }
 }

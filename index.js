@@ -113,7 +113,7 @@ addressparser._handleAddress = function(tokens){
         // http://tools.ietf.org/html/rfc2822#appendix-A.1.3
         data.text = data.text.join(" ");
         addresses.push({
-            name: data.text || address.name,
+            name: data.text || (address && address.name),
             group: data.group.length ? addressparser.parse(data.group.join(",")) : []
         });
     }else{

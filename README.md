@@ -6,45 +6,56 @@ Parse e-mail address fields
 
 Install with npm
 
-    npm install addressparser
+```
+npm install addressparser
+```
 
 ## Usage
 
 Include the module
 
-    var addressparser = require("addressparser");
+```javascript
+var addressparser = require('addressparser');
+```
 
 Parse some address strings with addressparser(field)
 
-    var addresses = addressparser("andris <andris@tr.ee>");
-    console.log(addresses); // [{name: "andris", address:"andris@tr.ee"}]
+```javascript
+var addresses = addressparser('andris <andris@tr.ee>');
+console.log(addresses); // [{name: "andris", address:"andris@tr.ee"}]
+```
 
 And when using groups
 
-    addressparser('Composers:"Bach, Sebastian" <sebu@example.com>, mozart@example.com (Mozzie);');
+```javascript
+addressparser('Composers:"Bach, Sebastian" <sebu@example.com>, mozart@example.com (Mozzie);');
+```
 
-the result is
+the result would be
 
-    [
-        {
-            name: "Composers",
-            group: [
-                {
-                    address: "sebu@example.com",
-                    name: "Bach, Sebastian"
-                },
-                {
-                    address: "mozart@example.com",
-                    name: "Mozzie"
-                }
-            ]
-        }
-    ]
+```json
+[
+    {
+        name: "Composers",
+        group: [
+            {
+                address: "sebu@example.com",
+                name: "Bach, Sebastian"
+            },
+            {
+                address: "mozart@example.com",
+                name: "Mozzie"
+            }
+        ]
+    }
+]
+```
 
+> Be prepared though that groups might be nested.
 
 ## Notes
 
-  * **NB!** this module does not decode any mime-word or punycode encoded strings, it is only a basic parser for parsing the base data, you need to decode the encoded parts later by yourself
+This module does not decode any mime-word or punycode encoded strings, it is only a basic parser for parsing the base data, you need to decode the encoded parts later by yourself
 
 ## License
 

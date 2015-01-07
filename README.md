@@ -1,6 +1,8 @@
 # addressparser
 
-Parse e-mail address fields
+Parse e-mail address fields. Input can be a single address (`"andris@kreata.ee"`), a formatted address (`"Andris Reinman <andris@kreata.ee>"`), comma separated list of addresses (`"andris@kreata.ee, andris.reinman@kreata.ee"`), an address group (`"disclosed-recipients:andris@kreata.ee;"`) or a mix of all the formats.
+
+In addition to comma the semicolon is treated as the list delimiter as well (except when used in the group syntax), so a value `"andris@kreata.ee; andris.reinman@kreata.ee"` is identical to `"andris@kreata.ee, andris.reinman@kreata.ee"`.
 
 ## Installation
 
@@ -18,7 +20,7 @@ Include the module
 var addressparser = require('addressparser');
 ```
 
-Parse some address strings with addressparser(field)
+Parse some address strings with `addressparser(field)`
 
 ```javascript
 var addresses = addressparser('andris <andris@tr.ee>');
@@ -33,7 +35,7 @@ addressparser('Composers:"Bach, Sebastian" <sebu@example.com>, mozart@example.co
 
 the result would be
 
-```json
+```
 [
     {
         name: "Composers",

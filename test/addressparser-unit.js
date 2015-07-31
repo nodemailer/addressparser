@@ -194,4 +194,13 @@ describe('#addressparser', function() {
             }];
         expect(addressparser(input)).to.deep.equal(expected);
     });
+    // should not change an invalid email to valid email
+    it('should handle invalid email address correctly', function() {
+      var input = 'name@address.com@address2.com',
+        expected = [{
+          name: '',
+          address: 'name@address.com@address2.com'
+        }];
+      expect(addressparser(input)).to.deep.equal(expected);
+    });
 });

@@ -131,7 +131,8 @@ function _handleAddress(tokens) {
             // still no address
             if (!data.address.length) {
                 for (i = data.text.length - 1; i >= 0; i--) {
-                    data.text[i] = data.text[i].replace(/\s*\b[^@\s]+@[^@\s]+\b\s*/, _regexHandler).trim();
+                  // fixed the regex to parse email address correctly when email address has more than one @
+                  data.text[i] = data.text[i].replace(/\s*\b[^@\s]+@[^\s]+\b\s*/, _regexHandler).trim();
                     if (data.address.length) {
                         break;
                     }

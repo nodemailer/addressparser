@@ -207,4 +207,13 @@ describe('#addressparser', function () {
         }];
         expect(addressparser(input)).to.deep.equal(expected);
     });
+
+    it('should handle unexpected <', function () {
+        var input = 'reinman > andris < test <andris@tr.ee>';
+        var expected = [{
+            name: 'reinman > andris',
+            address: 'andris@tr.ee'
+        }];
+        expect(addressparser(input)).to.deep.equal(expected);
+    });
 });

@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.1 2016-02-06
+
+  * If the input string includes an unexpected < which messes up address part, then truncate unexpected data (similar to OSX Mail)
+
 ## v1.0.0 2016-01-11
 
   * Start using semver compatible versioning scheme, starting from v1.0.0

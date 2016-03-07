@@ -216,4 +216,40 @@ describe('#addressparser', function () {
         }];
         expect(addressparser(input)).to.deep.equal(expected);
     });
+
+    it('should handle single-quoted address', function () {
+        var input = 'andris reinman <\'andris@tr.ee\'>';
+        var expected = [{
+            name: 'andris reinman',
+            address: 'andris@tr.ee'
+        }];
+        expect(addressparser(input)).to.deep.equal(expected);
+    });
+
+    it('should handle double-quoted address', function () {
+        var input = 'andris reinman <"andris@tr.ee">';
+        var expected = [{
+            name: 'andris reinman',
+            address: 'andris@tr.ee'
+        }];
+        expect(addressparser(input)).to.deep.equal(expected);
+    });
+
+    it('should handle quoted email name', function () {
+        var input = '"andris@tr.ee" <"andris@tr.ee">';
+        var expected = [{
+            name: '',
+            address: 'andris@tr.ee'
+        }];
+        expect(addressparser(input)).to.deep.equal(expected);
+    });
+
+    it('should not handle email quoted midway', function () {
+        var input = 'andris reinman <and"ris@tr.ee">';
+        var expected = [{
+            name: 'andris reinman',
+            address: 'and"ris@tr.ee"'
+        }];
+        expect(addressparser(input)).to.deep.equal(expected);
+    });
 });
